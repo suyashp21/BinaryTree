@@ -12,6 +12,7 @@ struct node {
 
 void add(node* head, node* n);
 node* search(node* head, int k);
+void remove(node* head, node* n);
 
 int main() {
   node* head = NULL;
@@ -52,56 +53,7 @@ int main() {
 	cout << "That number isn't in the tree!" << endl;
       }
       else {
-	if (n->left == NULL && n->right == NULL) { // no children
-	  if (head == n) {
-	    head = NULL;
-	    delete n;
-	  }
-	  else if (n->parent->left == n) {
-	    n->parent->left = NULL;
-	    delete n;
-	  }
-	  else if (n->parent->right == n) {
-	    n->parent->right = NULL;
-	    delete n;
-	  }
-	}
-	
-	else if (n->left == NULL) {
-	  if (head == n) {
-	    head = n->right;
-	    head->parent = NULL;
-	    delete n;
-	  }
-	  else if (n->parent->left == n) {
-	    n->parent->left = n->right;
-	    n->right->parent = n->parent;
-	  }
-	  else if (n->parent->right == n) {
-	    n->parent->right = n->right;
-	    n->right->parent = n->parent;
-	  }
-	}
-	
-	else if (n->right == NULL) {
-	  if (head == n) {
-	    head = n->left;
-	    head->parent = NULL;
-	    delete n;
-	  }
-          else if (n->parent->left == n) {
-            n->parent->left = n->left;
-            n->left->parent = n->parent;
-          }
-          else if (n->parent->right == n) {
-            n->parent->right = n->left;
-            n->left->parent = n->parent;
-          }
-
-	}
-	
-	else { // has both left and right
-	}
+	remove(head, n);
       }
     }
     else if (strcmp(action, "QUIT") == 0 || strcmp(action, "quit") == 0) {
@@ -150,5 +102,57 @@ node* search(node* head, int k) {
 
   else {
     return search(head->right, k); // switch back to right
+  }
+}
+
+void remove(node* head, node* n) {
+  if (n->left == NULL && n->right == NULL) { // no children
+    if (head == n) {
+      head = NULL;
+      delete n;
+    }
+    else if (n->parent->left == n) {
+      n->parent->left = NULL;
+      delete n;
+    }
+    else if (n->parent->right == n) {
+      n->parent->right = NULL;
+      delete n;
+    }
+  }
+	
+  else if (n->left == NULL) {
+    if (head == n) {
+      head = n->right;
+      head->parent = NULL;
+      delete n;
+    }
+    else if (n->parent->left == n) {
+      n->parent->left = n->right;
+      n->right->parent = n->parent;
+    }
+    else if (n->parent->right == n) {
+      n->parent->right = n->right;
+      n->right->parent = n->parent;
+    }
+  }
+	
+  else if (n->right == NULL) {
+    if (head == n) {
+      head = n->left;
+      head->parent = NULL;
+      delete n;
+    }
+    else if (n->parent->left == n) {
+      n->parent->left = n->left;
+      n->left->parent = n->parent;
+    }
+    else if (n->parent->right == n) {
+      n->parent->right = n->left;
+      n->left->parent = n->parent;
+    }
+  }
+
+  else { // has both left and right
   }
 }
