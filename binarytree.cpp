@@ -1,5 +1,10 @@
+/* Author: Suyash Pandit
+Date: April 21, 2022
+This is a Binary Search Tree, precursor to Red-Black tree */
+
 #include <iostream>
 #include <cstring>
+#include <fstream>
 
 using namespace std;
 
@@ -19,7 +24,7 @@ int main() {
   char action[10];
   int input;
   while (true) {
-    cout << "What do you want to do? (ADD, DELETE, PRINT, SEARCH, QUIT) "; cin \
+    cout << "What do you want to do? (ADD, FILEIN, DELETE, PRINT, SEARCH, QUIT) "; cin \
 >> action;
     if (strcmp(action, "ADD") == 0 || strcmp(action, "add") == 0) {
       cout << "Enter the number to add: "; cin >> input;
@@ -35,6 +40,26 @@ int main() {
         add(head, n);
       }
       // cout << head->data << endl;
+    }
+
+    else if (strcmp(action, "FILEIN") == 0 || strcmp(action, "filein") == 0) {
+      // read in from file
+      ifstream myfile ("Numbers.txt");
+      for (int i=1; i<=11; i++) {
+	int k;
+	myfile >> k;
+	node* n = new node();
+	n->data = k;
+	n->parent = NULL;
+	n->left = NULL;
+	n->right = NULL;
+	if (head == NULL) {
+	  head = n;
+	}
+	else {
+	  add(head, n);
+	}
+      }
     }
     else if (strcmp(action, "SEARCH") == 0 || strcmp(action, "search") == 0) {
       cout << "Enter the number to search for: "; cin >> input;
@@ -137,7 +162,47 @@ int main() {
 	  }
 
 	  else {
-	    // code goes here
+	    node* n2 = n->left;
+	    if (n2->right == NULL) {
+	      if (n->parent->left == n) {
+		n->parent->left = n2;
+		n2->parent = n->parent;
+		n2->right = n->right;
+		n->right->parent = n2;
+	      }
+	      else if (n->parent->right == n) {
+		n->parent->right = n2;
+		n2->parent = n->parent;
+		n2->right = n->right;
+		n->right->parent = n2;
+	      }
+	      delete n;
+	    }
+	    else {
+	      while (n2->right != NULL) {
+		n2 = n2->right;
+	      }
+              n2->parent->right = n2->left;
+              if (n2->left != NULL) {
+                n2->left->parent = n2->parent;
+              }
+              n2->left = n->left;
+              n2->left->parent = n2;
+              n2->right = n->right;
+              n2->right->parent = n2;
+              n2->parent = n->parent;
+	      if (n->parent->left == n) {
+		n->parent->left = n2;
+		n2->parent = n->parent;
+	      }
+	      else if (n->parent->right == n) {
+		n->parent->right = n2;
+		n2->parent = n->parent;
+	      }
+              delete n;
+
+	      
+	    }
 	  }
 	}
       }
