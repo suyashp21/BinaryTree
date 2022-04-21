@@ -12,7 +12,7 @@ struct node {
 
 void add(node* head, node* n);
 node* search(node* head, int k);
-void remove(node* head, node* n);
+void print(node* n, int k);
 
 int main() {
   node* head = NULL;
@@ -46,6 +46,12 @@ int main() {
       }
     }
 
+    else if (strcmp(action, "PRINT") == 0 || strcmp(action, "print") == 0) {
+      cout << endl;
+      print(head, 0);
+    }
+    
+
     else if (strcmp(action, "DELETE") == 0 || strcmp(action, "delete") == 0) {
       cout << "Enter the number to delete: "; cin >> input;
       node* n = search(head, input);
@@ -53,7 +59,71 @@ int main() {
 	cout << "That number isn't in the tree!" << endl;
       }
       else {
-	remove(head, n);
+	if (n->left == NULL && n->right == NULL) { // no children
+	  if (n == head) {
+	    head = NULL;
+	    delete n;
+	  }
+	  else if (n->parent->left == n) {
+	    n->parent->left = NULL;
+	    delete n;
+	  }
+	  else if (n->parent->right == n) {
+	    n->parent->right = NULL;
+	    delete n;
+	  }
+	}
+	else if (n->left == NULL) {
+	  if (n == head) {
+	    head = head->right;
+	    delete n;
+	  }
+
+	  else if (n->parent->left == n) {
+	    n->parent->left = n->right;
+	    n->right->parent = n->parent;
+	    delete n;
+	  }
+	  
+	  else if (n->parent->right == n) {
+	    n->parent->right = n->right;
+	    n->right->parent = n->parent;
+	    delete n;
+	  }
+	}
+	else if (n->right == NULL) {
+	  if (n == head) {
+	    head = head->left;
+	  }
+
+	  else if (n->parent->left == n) {
+	    n->parent->left = n->left;
+	    n->left->parent = n->parent;
+	    delete n;
+	  }
+
+	  else if (n->parent->right == n) {
+	    n->parent->right = n->left;
+	    n->left->parent = n->parent;
+	    delete n;
+	  }
+	}
+	else { // has two children
+	  if (n == head) {
+	    node* n2 = n->left;
+	    while (n2->right != NULL) {
+	      n2 = n2->right;
+	    }
+
+	    head = n2;
+	    n2->left = n->left;
+	    n2->right = n->right;
+	    n2->parent = NULL;
+	  }
+
+	  else {
+	  }
+	}
       }
     }
     else if (strcmp(action, "QUIT") == 0 || strcmp(action, "quit") == 0) {
@@ -105,54 +175,18 @@ node* search(node* head, int k) {
   }
 }
 
-void remove(node* head, node* n) {
-  if (n->left == NULL && n->right == NULL) { // no children
-    if (head == n) {
-      head = NULL;
-      delete n;
-    }
-    else if (n->parent->left == n) {
-      n->parent->left = NULL;
-      delete n;
-    }
-    else if (n->parent->right == n) {
-      n->parent->right = NULL;
-      delete n;
-    }
+void print(node* n, int k) {
+  if (n == NULL) {
+    // do nothing
   }
-	
-  else if (n->left == NULL) {
-    if (head == n) {
-      head = n->right;
-      head->parent = NULL;
-      delete n;
-    }
-    else if (n->parent->left == n) {
-      n->parent->left = n->right;
-      n->right->parent = n->parent;
-    }
-    else if (n->parent->right == n) {
-      n->parent->right = n->right;
-      n->right->parent = n->parent;
-    }
-  }
-	
-  else if (n->right == NULL) {
-    if (head == n) {
-      head = n->left;
-      head->parent = NULL;
-      delete n;
-    }
-    else if (n->parent->left == n) {
-      n->parent->left = n->left;
-      n->left->parent = n->parent;
-    }
-    else if (n->parent->right == n) {
-      n->parent->right = n->left;
-      n->left->parent = n->parent;
-    }
-  }
+  else {
+    print(n->right, k+1);
 
-  else { // has both left and right
+    for (int i=0; i<k; i++) {
+      cout << "\t";
+    }
+    cout << n->data << endl;
+
+    print(n->left, k+1);
   }
 }
