@@ -111,17 +111,33 @@ int main() {
 	else { // has two children
 	  if (n == head) {
 	    node* n2 = n->left;
-	    while (n2->right != NULL) {
-	      n2 = n2->right;
+	    if (n2->right == NULL) {
+	      head = n2;
+	      n2->right = n->right;
+	      n2->right->parent = n2;
+	      n2->parent = NULL;
+	      delete n;
 	    }
-
-	    head = n2;
-	    n2->left = n->left;
-	    n2->right = n->right;
-	    n2->parent = NULL;
+	    else {
+	      while (n2->right != NULL) {
+	        n2 = n2->right;
+	      }
+	      n2->parent->right = n2->left;
+	      if (n2->left != NULL) {
+		n2->left->parent = n2->parent;
+	      }
+	      head = n2;
+	      n2->left = n->left;
+	      n2->left->parent = n2;
+	      n2->right = n->right;
+	      n2->right->parent = n2;
+	      n2->parent = NULL;
+	      delete n;
+	    }
 	  }
 
 	  else {
+	    // code goes here
 	  }
 	}
       }
